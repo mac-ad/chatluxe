@@ -1,5 +1,6 @@
 "use client";
 
+import ChatDetail from "@/components/ChatDetail/ChatDetail";
 import ChatLists from "@/components/ChatLists/ChatLists";
 import IconOnlyNav from "@/components/IconOnlyNav/IconOnlyNav";
 import { IconOnlyNavItems, NavEnum } from "@/constants/nav";
@@ -21,11 +22,13 @@ export default function Home() {
         <IconOnlyNav activeItem={currentNav} onClick={setCurrentNav} />
       </div>
       {/* list of friends */}
-      <div className="border-r dark:border-r-0  max-w-[350px] flex-1 py-2">
+      <div className="border-r  max-w-[350px] flex-1 py-2  dark:border-r-[rgba(255,255,255,.1)]  ">
         <ChatLists />
       </div>
       {/* chat Displaying Area */}
-      <div className=" p-2">chatdisplay</div>
+      <div className="flex-1">
+        <ChatDetail />
+      </div>
     </div>
   );
 }

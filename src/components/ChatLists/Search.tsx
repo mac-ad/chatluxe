@@ -7,7 +7,7 @@ const Search = () => {
       <input
         type="text"
         placeholder="Search"
-        className="border p-2 w-full rounded-md outline-none pr-8  dark:bg-[#212C32] dark:border-none"
+        className="border p-2 w-full rounded-md outline-none pr-8 dark:bg-[#212C32] dark:border-none"
       />
       <Icon
         icon="bx:search"

@@ -50,10 +50,10 @@ const chatItems = [
 const ChatLists = () => {
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex items-center justify-between border-b dark:border-none px-2 py-2">
-        <h1 className="text-xl font-bold">Chats</h1>
+      <div className="flex items-center justify-between border-b dark:border-none px-3 py-2">
+        <h1 className="text-2xl font-bold">Chats</h1>
         {/* menu */}
-        <Dropdown showArrow placement="bottom-end" className="">
+        <Dropdown backdrop="opaque" placement="bottom-end" className="">
           <DropdownTrigger>
             <div className="w-[40px] cursor-pointer rounded-md aspect-square hover:bg-[#ddd] dark:hover:bg-[#364249] flex items-center justify-center">
               <Icon icon="system-uicons:menu-vertical" fontSize={25} />
