@@ -7,6 +7,9 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import MyEmojiPicker from "../MyEmojiPicker/MyEmojiPicker";
+import { useForm } from "react-hook-form";
+import { ChatStoreState, useChatStore } from "@/store/chatStore";
+import messageService from "@/services/message/message.service";
 
 const attachmentItems = [
   {
@@ -47,6 +50,19 @@ const attachmentItems = [
 ];
 
 const MessageType = () => {
+  const chatDetail = useChatStore((state: ChatStoreState) => state);
+
+  const { handleSubmit, setValue } = useForm();
+
+  const onSubmit = async (data: any) => {
+    try {
+      const res = await messageService.sendMessage({
+        conversationId: chatDetail?._id!,
+        payload: data,
+      });
+    } catch (err) {}
+  };
+
   return (
     <div className="flex items-center gap-2">
       {/* emoji */}
@@ -63,7 +79,7 @@ const MessageType = () => {
           <DropdownSection>
             {attachmentItems?.map((item, idx: number) => (
               <DropdownItem
-                key="new"
+                key={idx}
                 startContent={
                   <Icon
                     icon={item?.icon}
@@ -82,10 +98,11 @@ const MessageType = () => {
       </Dropdown>
 
       {/* message input */}
-      <form action="" className="flex-1 flex">
+      <form action="" className="flex-1 flex" onSubmit={handleSubmit(onSubmit)}>
         <input
           type="text"
           placeholder="Type a message"
+          onChange={(e: any) => setValue("text", e.target.value)}
           className="p-3 px-4 rounded-md w-full border dark:border-none dark:bg-[#2A3843] outline-none"
         />
       </form>

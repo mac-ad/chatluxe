@@ -23,8 +23,8 @@ interface IThemeProviderProps {
   children?: React.ReactNode;
 }
 
-export const ThemeProvider = ({ children }: IThemeProviderProps) => {
+export const MyThemeSwitcher = ({ children }: IThemeProviderProps) => {
   const theme = useGlobalStore((state: GlobalStoreState) => state.theme);
 
-  return <div className={theme}>{children}</div>;
+  return <div>{children}</div>;
 };

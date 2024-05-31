@@ -5,7 +5,7 @@ import { checkIfTokenExpired } from "./common";
 
 export const fetchWrapper = async (url: string, options: any = {}) => {
   const origin = window.location.origin;
-  let accessToken = sessionStorage.getItem("accessToken");
+  let accessToken = localStorage.getItem("accessToken");
 
   if (accessToken === "undefined") {
     accessToken = null;
@@ -35,12 +35,17 @@ export const fetchWrapper = async (url: string, options: any = {}) => {
 
   const headers = {
     Authorization: accessToken ? `Bearer ${accessToken}` : null,
+    credentials: "include",
+    // withCredentials: true,
+    // credentials: true,
   };
 
   options.headers = {
     ...options.headers,
     ...headers,
   };
+
+  console.log("final = ", options);
 
   return await fetch(url, options);
 };

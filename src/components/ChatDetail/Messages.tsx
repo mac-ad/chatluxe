@@ -1,3 +1,6 @@
+import messageService from "@/services/message/message.service";
+import { ChatStoreState, useChatStore } from "@/store/chatStore";
+import { GlobalStoreState, useGlobalStore } from "@/store/store";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Dropdown,
@@ -6,6 +9,7 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const items = [
@@ -77,16 +81,39 @@ const items = [
 ];
 
 const Messages = () => {
+  // fetch all messages of the current conversation
+
+  const [messages, setMessages] = useState<any>([]);
+  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const self = useGlobalStore((state: GlobalStoreState) => state.user);
+
+  const fetchAllMessages = async () => {
+    try {
+      const res = await messageService.getAll({
+        conversationId: chatDetail?._id!,
+      });
+      setMessages(res.data);
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    fetchAllMessages();
+  }, [chatDetail]);
+
   return (
     <div className="flex flex-col gap-2 py-4">
-      {items?.map((it, idx: number) => (
+      {messages?.map((msg: any, idx: number) => (
         <div
-          className={twMerge(it?.self ? "ml-auto" : "", "w-fit  max-w-[60%]")}
+          className={twMerge(
+            msg?.sender?._id === self?._id ? "ml-auto" : "",
+            "w-fit  max-w-[60%]"
+          )}
+          key={idx}
         >
           <Message
             idx={idx}
-            self={it.self ? it.self : false}
-            content={it.content}
+            self={msg?.sender?._id === self?._id}
+            content={msg.text}
           />
         </div>
       ))}
@@ -104,7 +131,12 @@ const Message = ({
   idx: number;
 }) => {
   return (
-    <div className=" p-2 w-fit rounded-md flex min-w-[150px] flex-col bg-[#212C32] gap-1 group overflow-hidden">
+    <div
+      className={twMerge(
+        "p-2 w-fit rounded-md flex min-w-[150px] flex-col border bg-[#ddd] dark:bg-[#212C32] dark:border-transparent gap-1 group overflow-hidden",
+        self ? "bg-[rgba(0,0,0,.8)] text-white" : ""
+      )}
+    >
       <div className="flex gap-3">
         <p className="text-sm">{content}</p>
         <div className="ml-auto translate-x-[160%] transition-all group-hover:translate-x-0">

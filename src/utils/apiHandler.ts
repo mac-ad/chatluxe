@@ -17,7 +17,68 @@ async function get({
   };
 
   const authHeaders: any = await authHeader();
+  requestOptions.headers = authHeaders;
 
+  return fetchWrapper(requestURL, requestOptions).then((response) =>
+    handleResponse(response, {
+      ...requestOptions,
+      url: requestURL,
+      signal,
+    })
+  );
+}
+
+async function post({
+  requestURL,
+  requestHeaders = {},
+  signal,
+  payload,
+}: {
+  requestURL: string;
+  requestHeaders?: Record<string, string>;
+  signal?: AbortSignal;
+  payload: any;
+}) {
+  const requestOptions: any = {
+    method: "POST",
+    body: JSON.stringify(payload),
+  };
+
+  console.log("inside post");
+
+  const authHeaders: any = await authHeader();
+  requestOptions.headers = {
+    ...authHeaders,
+    // credentials: "include",
+    // withCredentials: true,
+  };
+  return fetchWrapper(requestURL, requestOptions).then((response) =>
+    handleResponse(response, {
+      ...requestOptions,
+      url: requestURL,
+      signal,
+    })
+  );
+}
+
+async function deleteReq({
+  requestURL,
+  requestHeaders = {},
+  signal,
+}: {
+  requestURL: string;
+  requestHeaders?: Record<string, string>;
+  signal?: AbortSignal;
+}) {
+  const requestOptions: any = {
+    method: "DELETE",
+  };
+
+  const authHeaders: any = await authHeader();
+  requestOptions.headers = {
+    ...authHeaders,
+    withCredentials: true,
+  };
   return fetchWrapper(requestURL, requestOptions).then((response) =>
     handleResponse(response, {
       ...requestOptions,
@@ -29,4 +90,6 @@ async function get({
 
 export default {
   get,
+  post,
+  deleteReq,
 };

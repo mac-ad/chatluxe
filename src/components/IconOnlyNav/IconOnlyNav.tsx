@@ -2,7 +2,8 @@ import { IconOnlyNavItems, IconOnlyNavItem, NavEnum } from "@/constants/nav";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Switch, Tooltip } from "@nextui-org/react";
-import { Dispatch } from "react";
+import { useTheme } from "next-themes";
+import { Dispatch, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
 const IconOnlyNav = ({
@@ -10,18 +11,25 @@ const IconOnlyNav = ({
   onClick,
 }: {
   activeItem: NavEnum;
-  onClick: Dispatch<NavEnum>;
+  onClick: Function;
 }) => {
   const toggleTheme = useGlobalStore(
     (state: GlobalStoreState) => state.toggleTheme
   );
   const theme = useGlobalStore((state: GlobalStoreState) => state.theme);
 
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme(theme);
+  }, [theme]);
+
   return (
     <div className="h-full flex flex-col items-center justify-center gap-2 ">
       {IconOnlyNavItems?.map((item: IconOnlyNavItem, idx: number) =>
         item?.key === NavEnum.THEME ? (
           <Switch
+            key={idx}
             defaultSelected
             size="sm"
             color="default"

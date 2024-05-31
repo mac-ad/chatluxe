@@ -8,6 +8,11 @@ import {
 } from "@nextui-org/react";
 import Search from "./Search";
 import Tag from "../Tag/Tag";
+import { GlobalStoreState, useGlobalStore } from "@/store/store";
+import { useEffect, useState } from "react";
+import { Conversation, IChatItem } from "@/types/conversations.types";
+import { ChatStoreState, useChatStore } from "@/store/chatStore";
+import conversationService from "@/services/conversation/conversation.service";
 import ChatItem from "./ChatItem";
 
 const searchTags = [
@@ -48,9 +53,28 @@ const chatItems = [
 ];
 
 const ChatLists = () => {
+  const [chats, setChats] = useState<IChatItem[] | []>([]);
+
+  const logout = useGlobalStore((state: GlobalStoreState) => state.logOutUser);
+  const currentConv = useChatStore((state: ChatStoreState) => state);
+
+  // get all conversations
+  const getAllConversations = async () => {
+    try {
+      const res = await conversationService.getAll({});
+      setChats(res.data);
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
+  useEffect(() => {
+    getAllConversations();
+  }, []);
+
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex items-center justify-between border-b dark:border-none px-3 py-2">
+      <div className="flex items-center justify-between border-b dark:border-none px-3 h-[var(--header-height)]">
         <h1 className="text-2xl font-bold">Chats</h1>
         {/* menu */}
         <Dropdown backdrop="opaque" placement="bottom-end" className="">
@@ -69,6 +93,7 @@ const ChatLists = () => {
                 endContent={
                   <Icon icon="material-symbols:logout" fontSize={20} />
                 }
+                onClick={() => logout()}
               >
                 Logout
               </DropdownItem>
@@ -80,14 +105,18 @@ const ChatLists = () => {
         <Search />
         <div className="flex gap-2">
           {searchTags?.map((item: any) => (
-            <Tag name={item?.name} />
+            <Tag name={item?.name} key={item?.name} />
           ))}
         </div>
       </div>
       <div className="flex-1  overflow-y-auto overflow-x-hidden">
         <div>
-          {chatItems?.map((item: any, idx: number) => (
-            <ChatItem idx={idx} />
+          {chats?.map((chat: IChatItem, idx: number) => (
+            <ChatItem
+              data={chat}
+              key={idx}
+              getAllConversations={getAllConversations}
+            />
           ))}
         </div>
       </div>

@@ -1,34 +1,62 @@
 "use client";
 
-import ChatDetail from "@/components/ChatDetail/ChatDetail";
-import ChatLists from "@/components/ChatLists/ChatLists";
-import IconOnlyNav from "@/components/IconOnlyNav/IconOnlyNav";
-import { IconOnlyNavItems, NavEnum } from "@/constants/nav";
-import todoService from "@/services/todo/todo.service";
+import AuthArea from "@/components/AuthArea/AuthArea";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { Switch } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import App from "./app";
+import userService from "@/services/user/user.service";
 
 export default function Home() {
-  const [currentNav, setCurrentNav] = useState<NavEnum>(
-    IconOnlyNavItems[0].key
-  );
+  const { isAuthenticated, add, loading, user, logUser, accessToken } =
+    useGlobalStore((state: GlobalStoreState) => state);
 
-  return (
-    <div className="flex  dark:bg-[#101B20] dark:text-white h-full w-full ">
-      {/* leftest nav bar */}
-      <div className="dark:border-r-[0] border-r p-2 dark:bg-[#212C32] pt-6 dark:border-r-[rgba(255,255,255,.1)] dark:border-r text-[rgba(0,0,0,.7)]">
-        <IconOnlyNav activeItem={currentNav} onClick={setCurrentNav} />
+  const getOwnProfile = async () => {
+    try {
+      const res = await userService.getSelf({});
+      add("isAuthenticated", true);
+      add("user", res.data);
+      add("loading", false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+  useEffect(() => {
+    // console.log("inside");
+    // see if token is stored in localstore to restore the session
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      add("loading", true);
+
+      console.log("got accessToken = ", accessToken);
+      // if access token is available then fetch user profile
+      // and then do according to response
+      // if response is errror that accessToken is expired or invalid then immediately log user out
+      // otherwise set user store with profile got and log user back in
+      getOwnProfile();
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    add("loading", false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
       </div>
-      {/* list of friends */}
-      <div className="border-r  max-w-[350px] flex-1 py-2  dark:border-r-[rgba(255,255,255,.1)]  ">
-        <ChatLists />
+    );
+  }
+
+  if (!isAuthenticated)
+    return (
+      <div className="flex dark:bg-[#101B20] dark:text-white h-full w-full ">
+        <AuthArea />
       </div>
-      {/* chat Displaying Area */}
-      <div className="flex-1">
-        <ChatDetail />
-      </div>
-    </div>
-  );
+    );
+
+  return <App />;
 }
