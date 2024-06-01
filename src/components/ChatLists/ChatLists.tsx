@@ -60,10 +60,6 @@ const ChatLists = ({
     getChatDetail(data);
   };
 
-  useEffect(() => {
-    // getAllConversations();
-  }, []);
-
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex items-center justify-between border-b dark:border-none px-3 h-[var(--header-height)]">

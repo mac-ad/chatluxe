@@ -39,11 +39,11 @@ export default function Home() {
       add("accessToken", accessToken);
       add("refreshToken", refreshToken);
     }
-  }, [accessToken]);
+  }, [add, getOwnProfile]);
 
   useEffect(() => {
     add("loading", false);
-  }, []);
+  }, [add]);
 
   if (loading) {
     return (
