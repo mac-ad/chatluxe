@@ -109,6 +109,7 @@ const CreateGroup = ({
         <AvatarGroup max={20} className="">
           {members?.map((user: UserShort) => (
             <SelectedMember
+              key={user?.username}
               data={user}
               onCross={() => memberCrossHandler(user)}
             />

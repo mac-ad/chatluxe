@@ -43,7 +43,7 @@ const LoginForm = (props: authFormPropsInterface) => {
           {loading ? "Logging in" : "Login"}
         </Button>
         <span className="flex items-center gap-2 text-sm opacity-80 justify-center lock ">
-          Don't have an account?
+          Dont have an account?
           <Link href="#" onClick={() => setPage("register")}>
             register now
           </Link>

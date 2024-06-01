@@ -1,6 +1,9 @@
 import { ChatStoreState, useChatStore } from "@/store/chatStore";
+import { GlobalStoreState, useGlobalStore } from "@/store/store";
+import { Participant } from "@/types/conversations.types";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Avatar } from "@nextui-org/react";
+import { useMemo } from "react";
 
 const ContactInfo = ({
   showContactDetailHandler,
@@ -8,6 +11,17 @@ const ContactInfo = ({
   showContactDetailHandler: Function;
 }) => {
   const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const self = useGlobalStore((state: GlobalStoreState) => state.user);
+
+  const recieverDetail: Participant | undefined | null = useMemo(
+    () =>
+      chatDetail?.isGroupConversation
+        ? null
+        : chatDetail?.participants?.filter(
+            (item: Participant) => item?._id !== self?._id
+          )?.[0],
+    [chatDetail]
+  );
 
   return (
     <div className="p-4 border-l dark:border-l-[rgba(255,255,255,.2)]">
@@ -30,9 +44,7 @@ const ContactInfo = ({
       <div className="flex flex-col items-center justify-center gap-2  ">
         <Avatar
           src={
-            chatDetail?.isGroupConversation
-              ? ""
-              : chatDetail?.recieverDetail?.avatar?.url
+            chatDetail?.isGroupConversation ? "" : recieverDetail?.avatar?.url
           }
           className="h-[180px] w-[180px]"
         />
@@ -40,7 +52,7 @@ const ContactInfo = ({
           <h3>
             {chatDetail?.isGroupConversation
               ? chatDetail?.name
-              : chatDetail?.recieverDetail?.username}
+              : recieverDetail?.username}
           </h3>
         </div>
       </div>
