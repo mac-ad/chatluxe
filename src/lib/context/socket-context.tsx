@@ -14,7 +14,7 @@ export const SocketContext = createContext<ISocketContext>({
 
 const getSocket = (accessToken: string | null) => {
   if (!accessToken) return null;
-  return socketio("http://localhost:8000/", {
+  return socketio(process.env.NEXT_PUBLIC_BASE_URL!, {
     withCredentials: true,
     auth: {
       Authorization: `Bearer ${accessToken}`,
