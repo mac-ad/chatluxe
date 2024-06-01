@@ -19,6 +19,14 @@ interface IDeleteChat {
   id: string;
 }
 
+interface ICreateGroup {
+  signal?: AbortSignal;
+  payload: {
+    name: string;
+    participants: string[];
+  };
+}
+
 const createOrGetConversation = ({
   signal,
   param,
@@ -52,4 +60,27 @@ const deleteChat = ({ signal, id }: IDeleteChat) => {
   });
 };
 
-export default { createOrGetConversation, getAll, deleteChat };
+const createGroup = ({ signal, payload }: ICreateGroup) => {
+  let url = API_URLS.CREATE_GROUP;
+  return apiHandler.post({
+    requestURL: `${url}`,
+    payload: payload,
+    signal,
+  });
+};
+
+const getChatDetail = ({ signal, param }: ICreateOrGetConversation) => {
+  let url = API_URLS.GET_CHAT_DETAIL;
+  return apiHandler.get({
+    requestURL: `${url}/${param}`,
+    signal,
+  });
+};
+
+export default {
+  createOrGetConversation,
+  getAll,
+  deleteChat,
+  createGroup,
+  getChatDetail,
+};

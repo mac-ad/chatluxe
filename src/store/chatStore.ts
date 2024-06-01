@@ -27,6 +27,7 @@ export const useChatStore = create<ChatStoreState>()((set, get) => ({
     set((state: ChatStoreState) => ({
       ...state,
       ...data,
+      loading: false,
     }));
   },
   add: (key: string, value: string) => {

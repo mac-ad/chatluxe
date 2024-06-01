@@ -22,20 +22,22 @@ export default function Home() {
     }
   };
 
-
   useEffect(() => {
     // console.log("inside");
     // see if token is stored in localstore to restore the session
     const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
     if (accessToken) {
       add("loading", true);
 
-      console.log("got accessToken = ", accessToken);
       // if access token is available then fetch user profile
       // and then do according to response
       // if response is errror that accessToken is expired or invalid then immediately log user out
       // otherwise set user store with profile got and log user back in
       getOwnProfile();
+      add("accessToken", accessToken);
+      add("refreshToken", refreshToken);
     }
   }, [accessToken]);
 

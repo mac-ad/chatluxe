@@ -1,9 +1,11 @@
+import { UserItemType } from "@/constants/common";
 import { NavEnum } from "@/constants/nav";
 import conversationService from "@/services/conversation/conversation.service";
 import friendshipService from "@/services/friendship/friendship.service";
 import { ChatStoreState, useChatStore } from "@/store/chatStore";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
-import { User } from "@/types/auth.types";
+import { User, UserShort } from "@/types/auth.types";
+import { IUserItem } from "@/types/conversations.types";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Avatar,
@@ -16,12 +18,20 @@ import {
 } from "@nextui-org/react";
 import React, { useEffect, useMemo } from "react";
 
-const UserItem = ({ data }: { data: User }) => {
+const UserItem = ({
+  data,
+  onClick,
+  placeholder,
+  type,
+}: {
+  data: UserShort;
+  onClick: Function;
+  placeholder?: String;
+  type?: UserItemType;
+}) => {
   const friends = useGlobalStore(
     (state: GlobalStoreState) => state?.user?.friends
   );
-  const store = useGlobalStore((state: GlobalStoreState) => state);
-  const chatStore = useChatStore((state: ChatStoreState) => state);
 
   // const isFriend = useMemo(
   //   () => friends?.includes(data?._id),
@@ -41,45 +51,17 @@ const UserItem = ({ data }: { data: User }) => {
     }
   };
 
-  const abortController = new AbortController();
-
-  const conversationHandler = async () => {
-    try {
-      abortController.abort();
-      const res = await conversationService.createOrGetConversation({
-        param: data?._id,
-        signal: abortController.signal,
-      });
-      //   navigate to chat tab
-      store.add("currentNav", NavEnum.CHATS);
-      // save chat detail
-      chatStore.saveChat(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    return () => abortController.abort();
-  }, []);
-
   return (
     <div
-      className="group transition-all flex items-center p-4 gap-3 border-b dark:border-b-[rgba(255,255,255,.1)] dark:hover:bg-[#212C32]   cursor-pointer"
-      onClick={conversationHandler}
+      className="group transition-all flex hover:bg-[#ddd]  items-center p-4 gap-3 border-b dark:border-b-[rgba(255,255,255,.1)] dark:hover:bg-[#212C32]   cursor-pointer"
+      onClick={() => onClick(data)}
     >
       <Avatar src={data?.avatar?.url} />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <h3 className="font-semibold">{data?.username}</h3>
-        <div className="flex items-center gap-2">
-          {/* {!isFriend && (
-            <Button size="sm" onClick={sendFriendRequestHandler}>
-              <Icon icon="material-symbols:add" />
-              Add Bro
-            </Button>
-          )}
-          {isFriend && <Button size="sm">Go to Chat</Button>} */}
-        </div>
+        <p className="text-sm opacity-80 dark:opacity-50">
+          {placeholder ?? `Say hi to ${data?.username}`}
+        </p>
       </div>
       <div className="self-start ml-auto flex flex-col">
         {/* <span className="text-xs whitespace-nowrap opacity-80 dark:opacity-50">

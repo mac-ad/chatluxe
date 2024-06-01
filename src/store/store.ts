@@ -56,6 +56,8 @@ export const useGlobalStore = create<GlobalStoreState>()((set, get) => ({
     set((state: GlobalStoreState) => ({
       ...state,
       user: data?.user,
+      accessToken: data?.accessToken,
+      refreshToken: data?.refreshToken,
       isAuthenticated: true,
       loading: false,
     }));

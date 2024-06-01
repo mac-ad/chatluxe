@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
+  Checkbox,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -27,49 +28,40 @@ const searchTags = [
   },
 ];
 
-const chatItems = [
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-];
-
-const ChatLists = () => {
-  const [chats, setChats] = useState<IChatItem[] | []>([]);
-
+const ChatLists = ({
+  createGroupHandler,
+  chats,
+}: {
+  createGroupHandler: Function;
+  chats: IChatItem[];
+}) => {
   const logout = useGlobalStore((state: GlobalStoreState) => state.logOutUser);
   const currentConv = useChatStore((state: ChatStoreState) => state);
 
-  // get all conversations
-  const getAllConversations = async () => {
+  const chatDetail = useChatStore((state: ChatStoreState) => state);
+
+  console.log("chats = ", chats);
+
+  const getChatDetail = async (data: IChatItem) => {
     try {
-      const res = await conversationService.getAll({});
-      setChats(res.data);
+      const res = await conversationService.getChatDetail({
+        param: data?._id!,
+      });
+      // add chat detail to store local
+      chatDetail.saveChat(res.data);
     } catch (err) {
       console.log("err", err);
     }
   };
 
+  const chatItemClickHandler = (data: IChatItem) => {
+    // get chat detail and save in store
+    chatDetail.add("loading", true);
+    getChatDetail(data);
+  };
+
   useEffect(() => {
-    getAllConversations();
+    // getAllConversations();
   }, []);
 
   return (
@@ -85,7 +77,11 @@ const ChatLists = () => {
           </DropdownTrigger>
           <DropdownMenu>
             <DropdownSection>
-              <DropdownItem key="new" shortcut="⌘N">
+              <DropdownItem
+                key="new"
+                shortcut="⌘N"
+                onClick={() => createGroupHandler()}
+              >
                 New Group
               </DropdownItem>
               <DropdownItem
@@ -115,7 +111,8 @@ const ChatLists = () => {
             <ChatItem
               data={chat}
               key={idx}
-              getAllConversations={getAllConversations}
+              onClick={() => chatItemClickHandler(chat)}
+              refreshChatList={() => {}}
             />
           ))}
         </div>

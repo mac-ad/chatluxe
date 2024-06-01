@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-const MyEmojiPicker = () => {
+const MyEmojiPicker = ({ changeHandler }: { changeHandler: Function }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 
   const toggle = () => {
@@ -24,7 +24,7 @@ const MyEmojiPicker = () => {
       </div>
       {showEmojiPicker && (
         <div className="absolute top-0 translate-y-[-100%]">
-          <Picker data={data} onEmojiSelect={console.log} class="light" />
+          <Picker data={data} class="light" onEmojiSelect={changeHandler} />
         </div>
       )}
     </div>

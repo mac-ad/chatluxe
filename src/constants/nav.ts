@@ -4,6 +4,7 @@ export enum NavEnum {
   REQUESTS = "REQUESTS",
   SETTINGS = "SETTINGS",
   THEME = "THEME",
+  LOGOUT = "LOGOUT",
 }
 
 export interface IconOnlyNavItem {
@@ -38,4 +39,9 @@ export const IconOnlyNavItems: IconOnlyNavItem[] = [
     icon: "solar:settings-bold",
     key: NavEnum.SETTINGS,
   },
+  // {
+  //   name: "logout",
+  //   icon: "clarity:logout-line",
+  //   key: NavEnum.LOGOUT,
+  // },
 ];

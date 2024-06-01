@@ -45,7 +45,5 @@ export const fetchWrapper = async (url: string, options: any = {}) => {
     ...headers,
   };
 
-  console.log("final = ", options);
-
   return await fetch(url, options);
 };

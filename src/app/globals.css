@@ -29,3 +29,12 @@ body {
 
   /* background-image: url("https://static.whatsapp.net/rsrc.php/v3/yl/r/gi_DckOUM5a.png"); */
 }
+
+.nextui-avatar-group {
+  pointer-events: none;
+}
+
+.nextui-avatar-group:hover .nextui-avatar {
+  /* Add your desired hover styles here, e.g., opacity changes */
+  pointer-events: none;
+}

@@ -34,3 +34,12 @@ export interface logInResponse {
   message: string | undefined;
   success: boolean;
 }
+
+export interface UserShort {
+  _id: string;
+  avatar: {
+    url: string;
+    _id: string;
+  };
+  username: string;
+}

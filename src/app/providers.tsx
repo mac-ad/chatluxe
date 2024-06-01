@@ -1,5 +1,6 @@
 "use client";
 
+import { SocketProvider } from "@/lib/context/socket-context";
 import { MyThemeSwitcher } from "@/lib/context/theme-context";
 // import { ThemeProvider } from "@/lib/context/theme-context";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
@@ -14,7 +15,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       {/* <ThemeProvider>{children}</ThemeProvider> */}
       <MyThemeSwitcher>
         <ThemeProvider attribute="class" defaultTheme="system">
-          {children}
+          <SocketProvider>{children}</SocketProvider>
         </ThemeProvider>
       </MyThemeSwitcher>
     </NextUIProvider>

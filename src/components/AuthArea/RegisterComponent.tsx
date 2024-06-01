@@ -21,6 +21,7 @@ const RegisterComponent = ({ setPage }: { setPage: Dispatch<string> }) => {
       const res = await userService.register({
         payload: data,
       });
+      setPage("login");
       customToast.success({
         content: res.message,
       });

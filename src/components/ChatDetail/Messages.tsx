@@ -1,15 +1,19 @@
 import messageService from "@/services/message/message.service";
 import { ChatStoreState, useChatStore } from "@/store/chatStore";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
+import { IMessageItem } from "@/types/messages.types";
+import { convertTimeToHHMM } from "@/utils/common";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
+  Avatar,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownSection,
   DropdownTrigger,
+  Tooltip,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const items = [
@@ -80,25 +84,11 @@ const items = [
   },
 ];
 
-const Messages = () => {
+const Messages = ({ messages }: { messages: IMessageItem[] | [] }) => {
   // fetch all messages of the current conversation
 
-  const [messages, setMessages] = useState<any>([]);
   const chatDetail = useChatStore((state: ChatStoreState) => state);
   const self = useGlobalStore((state: GlobalStoreState) => state.user);
-
-  const fetchAllMessages = async () => {
-    try {
-      const res = await messageService.getAll({
-        conversationId: chatDetail?._id!,
-      });
-      setMessages(res.data);
-    } catch (err) {}
-  };
-
-  useEffect(() => {
-    fetchAllMessages();
-  }, [chatDetail]);
 
   return (
     <div className="flex flex-col gap-2 py-4">
@@ -113,7 +103,8 @@ const Messages = () => {
           <Message
             idx={idx}
             self={msg?.sender?._id === self?._id}
-            content={msg.text}
+            // content={msg.text}
+            data={msg}
           />
         </div>
       ))}
@@ -123,49 +114,61 @@ const Messages = () => {
 
 const Message = ({
   self,
-  content,
+  data,
   idx,
 }: {
   self: boolean;
-  content: string;
+  data: IMessageItem;
   idx: number;
 }) => {
   return (
-    <div
-      className={twMerge(
-        "p-2 w-fit rounded-md flex min-w-[150px] flex-col border bg-[#ddd] dark:bg-[#212C32] dark:border-transparent gap-1 group overflow-hidden",
-        self ? "bg-[rgba(0,0,0,.8)] text-white" : ""
+    <div className="flex items-start gap-2 ">
+      {!self && (
+        <Tooltip content={data?.sender?.username}>
+          <Avatar src={data?.sender?.avatar?.url} className="h-6 w-6" />
+        </Tooltip>
       )}
-    >
-      <div className="flex gap-3">
-        <p className="text-sm">{content}</p>
-        <div className="ml-auto translate-x-[160%] transition-all group-hover:translate-x-0">
-          <Dropdown placement="bottom-start" className="">
-            <DropdownTrigger>
-              <Icon
-                icon="akar-icons:chevron-down"
-                fontSize={15}
-                className="cursor-pointer"
-              />
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownSection>
-                <DropdownItem key="new">Reply</DropdownItem>
-                <DropdownItem key="new">React</DropdownItem>
-                <DropdownItem key="new">Forward</DropdownItem>
-                <DropdownItem key="new">Pin</DropdownItem>
-                <DropdownItem key="new">Star</DropdownItem>
-                <DropdownItem key="new" className="text-danger" color="danger">
-                  Delete
-                </DropdownItem>
-              </DropdownSection>
-            </DropdownMenu>
-          </Dropdown>
+
+      <div
+        className={twMerge(
+          "p-2 w-fit rounded-md flex min-w-[150px] flex-col border bg-[#ddd] dark:bg-[#212C32] dark:border-transparent gap-1 group overflow-hidden",
+          self ? "bg-[rgba(0,0,0,.8)] text-white" : ""
+        )}
+      >
+        <div className="flex gap-3">
+          <p className="text-sm">{data?.text}</p>
+          <div className="ml-auto translate-x-[160%] transition-all group-hover:translate-x-0">
+            <Dropdown placement="bottom-end" className="">
+              <DropdownTrigger>
+                <Icon
+                  icon="akar-icons:chevron-down"
+                  fontSize={15}
+                  className="cursor-pointer"
+                />
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownSection>
+                  <DropdownItem key="new">Reply</DropdownItem>
+                  <DropdownItem key="new">React</DropdownItem>
+                  <DropdownItem key="new">Forward</DropdownItem>
+                  <DropdownItem key="new">Pin</DropdownItem>
+                  <DropdownItem key="new">Star</DropdownItem>
+                  <DropdownItem
+                    key="new"
+                    className="text-danger"
+                    color="danger"
+                  >
+                    Delete
+                  </DropdownItem>
+                </DropdownSection>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
+        <small className="ml-auto text-[10px] opacity-60 dark:opacity-50">
+          {convertTimeToHHMM(data?.createdAt)}
+        </small>
       </div>
-      <small className="ml-auto text-[10px] opacity-60 dark:opacity-50">
-        12:5{idx} PM
-      </small>
     </div>
   );
 };
