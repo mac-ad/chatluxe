@@ -90,6 +90,7 @@ const MessageType = ({
     setValue("text", "");
     const payload = { ...data };
     console.log("data = ", data);
+    if (data?.text === "") return;
 
     // const formdata = new FormData();
     // formdata.append("file", data?.images?.[0]);
