@@ -24,6 +24,7 @@ export const useChatStore = create<ChatStoreState>()((set, get) => ({
   updatedAt: null,
   __v: null,
   saveChat: (data: Conversation) => {
+    console.log("saving chat", data);
     set((state: ChatStoreState) => ({
       ...state,
       ...data,

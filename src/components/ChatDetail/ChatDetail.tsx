@@ -27,6 +27,8 @@ const ChatDetail = ({
   const chatDetail = useChatStore((state: ChatStoreState) => state);
   const self = useGlobalStore((state: GlobalStoreState) => state?.user);
 
+  console.log("inside chat detail", chatDetail);
+
   const [messages, setMessages] = useState<IMessageItem[] | []>([]);
   const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
 
@@ -53,8 +55,6 @@ const ChatDetail = ({
     [chatDetail]
   );
 
-  console.log("reciever detail", recieverDetail, chatDetail);
-
   const fetchAllMessages = async () => {
     setMessagesLoading(true);
     try {
@@ -69,7 +69,20 @@ const ChatDetail = ({
   };
 
   const onMessageRecieved = (payload: IMessageItem) => {
-    setMessages((prev: IMessageItem[]) => [...prev, payload]);
+    // if message is coming in currently selected chat then update message otherwise update the chat item
+    // console.log(
+    //   "message recieved",
+    //   chatDetail,
+    //   payload,
+    //   chatDetail?._id === payload?.conversation
+    // );
+    console.log("message recieved", chatDetail);
+
+    if (!chatDetail?._id) return;
+
+    if (chatDetail?._id === payload?.conversation) {
+      setMessages((prev: IMessageItem[]) => [...prev, payload]);
+    }
   };
 
   useEffect(() => {

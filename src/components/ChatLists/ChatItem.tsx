@@ -63,7 +63,7 @@ const ChatItem = ({
       // if currentChat is the deleted chat then set the chat state to initial state
       chatDetail.reset();
       // refetch chat lists
-      refreshChatList();
+      refreshChatList(data);
     } catch (err) {}
   };
 

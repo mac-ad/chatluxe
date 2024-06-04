@@ -10,7 +10,7 @@ import {
 import Search from "./Search";
 import Tag from "../Tag/Tag";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Conversation, IChatItem } from "@/types/conversations.types";
 import { ChatStoreState, useChatStore } from "@/store/chatStore";
 import conversationService from "@/services/conversation/conversation.service";
@@ -31,16 +31,17 @@ const searchTags = [
 const ChatLists = ({
   createGroupHandler,
   chats,
+  setChats,
 }: {
   createGroupHandler: Function;
   chats: IChatItem[];
+  setChats: Dispatch<SetStateAction<IChatItem[]>>;
 }) => {
   const logout = useGlobalStore((state: GlobalStoreState) => state.logOutUser);
   const currentConv = useChatStore((state: ChatStoreState) => state);
 
   const chatDetail = useChatStore((state: ChatStoreState) => state);
-
-  console.log("chats = ", chats);
+  console.log("chatDetai; = ", chatDetail);
 
   const getChatDetail = async (data: IChatItem) => {
     try {
@@ -48,6 +49,7 @@ const ChatLists = ({
         param: data?._id!,
       });
       // add chat detail to store local
+      console.log("got detail = ", res.data);
       chatDetail.saveChat(res.data);
     } catch (err) {
       console.log("err", err);
@@ -58,6 +60,12 @@ const ChatLists = ({
     // get chat detail and save in store
     chatDetail.add("loading", true);
     getChatDetail(data);
+  };
+
+  const removeChatItem = (item: IChatItem) => {
+    setChats((prev: IChatItem[]) =>
+      prev.filter((it: IChatItem) => it?._id !== item?._id)
+    );
   };
 
   return (
@@ -108,7 +116,7 @@ const ChatLists = ({
               data={chat}
               key={idx}
               onClick={() => chatItemClickHandler(chat)}
-              refreshChatList={() => {}}
+              refreshChatList={removeChatItem}
             />
           ))}
         </div>

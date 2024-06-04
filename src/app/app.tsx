@@ -60,14 +60,14 @@ const App = () => {
     });
   };
 
+  console.log("chats = ", chats);
+
   const onChatUpdate = (chat: IChatItem) => {
-    console.log("chat updates", chat);
+    console.log("chat updated", chat);
     setChats((prev: IChatItem[]) => [
       ...prev.map((item: IChatItem) => (item?._id === chat?._id ? chat : item)),
     ]);
   };
-
-  console.log("uipdatedas chats", chats);
 
   useEffect(() => {
     if (!socket) return;
@@ -99,6 +99,7 @@ const App = () => {
         {currentNav === NavEnum.CHATS && (
           <ChatLists
             chats={chats}
+            setChats={setChats}
             createGroupHandler={() => setShowCreateGroup((prev) => !prev)}
           />
         )}

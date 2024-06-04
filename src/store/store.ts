@@ -24,7 +24,7 @@ export interface GlobalStoreState {
 
 export const useGlobalStore = create<GlobalStoreState>()((set, get) => ({
   isAuthenticated: false,
-  loading: false,
+  loading: true,
   currentNav: IconOnlyNavItems[0]?.key,
   refreshToken: null,
   accessToken: null,

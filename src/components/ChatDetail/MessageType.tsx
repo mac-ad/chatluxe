@@ -96,9 +96,9 @@ const MessageType = ({
 
       // emit recieved message socket
       if (socket) {
-        socket.emit(SOCKET_EVENTS.MESSAGE_RECIEVED, res.data);
+        // socket.emit(SOCKET_EVENTS.MESSAGE_RECIEVED, res.data);
         // emit chat update
-        // with last message 
+        // with last message
       }
 
       // for this current logged in user update chat

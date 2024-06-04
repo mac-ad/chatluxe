@@ -38,11 +38,13 @@ export default function Home() {
       getOwnProfile();
       add("accessToken", accessToken);
       add("refreshToken", refreshToken);
+    } else {
+      add("loading", false);
     }
   }, []);
 
   useEffect(() => {
-    add("loading", false);
+    // add("loading", false);
   }, []);
 
   if (loading) {
@@ -53,7 +55,7 @@ export default function Home() {
     );
   }
 
-  if (!isAuthenticated)
+  if (!isAuthenticated && !loading)
     return (
       <div className="flex dark:bg-[#101B20] dark:text-white h-full w-full ">
         <AuthArea />
