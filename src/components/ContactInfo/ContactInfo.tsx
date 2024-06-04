@@ -74,7 +74,7 @@ const ContactInfo = ({
           </h2>
           {chatDetail?.participants?.map((item: Participant) =>
             item?._id !== chatDetail?.admin?._id ? (
-              <UserItem data={item} />
+              <UserItem data={item} key={item?.username} />
             ) : null
           )}
         </div>
