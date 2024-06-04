@@ -115,12 +115,11 @@ const ChatItem = ({
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownSection>
-                <DropdownItem key="new">Archive Chat</DropdownItem>
-                <DropdownItem key="new">Mute Notifications</DropdownItem>
-                <DropdownItem key="new">Mark as unread</DropdownItem>
-                <DropdownItem key="new">Block</DropdownItem>
+                <DropdownItem>Archive Chat</DropdownItem>
+                <DropdownItem>Mute Notifications</DropdownItem>
+                <DropdownItem>Mark as unread</DropdownItem>
+                <DropdownItem>Block</DropdownItem>
                 <DropdownItem
-                  key="new"
                   className="text-danger"
                   color="danger"
                   onClick={chatDeleteHandler}

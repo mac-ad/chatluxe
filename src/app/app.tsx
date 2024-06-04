@@ -162,7 +162,7 @@ const App = () => {
         {showChatDetail && (
           <div
             className={twMerge(
-              "absolute xl:relative top-0 left-0 h-full w-full z-[200] dark:bg-[#101B20] bg-[white] translate-x-[100%] transition-all",
+              "absolute xl:relative top-0 left-0 h-full w-full z-[200] dark:bg-[#101B20] bg-[white] translate-x-[100%] transition-all overflow-y-auto",
               showChatDetail ? "translate-x-0" : ""
             )}
           >

@@ -6,7 +6,7 @@ const Search = () => {
     <div className="relative">
       <input
         type="text"
-        placeholder="Search"
+        placeholder="Under construction search wont work"
         className="border p-2 w-full rounded-md outline-none pr-8 dark:bg-[#212C32] dark:border-none"
       />
       <Icon

@@ -89,11 +89,7 @@ const ChatLists = ({
           </DropdownTrigger>
           <DropdownMenu>
             <DropdownSection>
-              <DropdownItem
-                key="new"
-                shortcut="⌘N"
-                onClick={() => createGroupHandler()}
-              >
+              <DropdownItem shortcut="⌘N" onClick={() => createGroupHandler()}>
                 New Group
               </DropdownItem>
               <DropdownItem

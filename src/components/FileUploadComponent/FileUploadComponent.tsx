@@ -47,6 +47,9 @@ const FileUploadComponent = ({
             />
           </div>
         )}
+        <h2 className="text-2xl max-w-[30ch] text-center opacity-50">
+          This is to be built, and is under construction
+        </h2>
       </div>
       <div className="flex flex-col gap-4">
         <Input placeholder="Add a caption" radius="sm" size="lg" />
@@ -56,7 +59,9 @@ const FileUploadComponent = ({
             <form
               enc-type="multipart/form-data"
               className="flex items-center  gap-2 w-full"
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={(e: any) => {
+                e.preventDefault();
+              }}
             >
               {/* {defaultValues?.images &&
                 defaultValues?.images?.length > 0 &&*/}

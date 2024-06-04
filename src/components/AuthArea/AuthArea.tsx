@@ -13,8 +13,8 @@ const AuthArea = () => {
   );
 
   return (
-    <div className="flex items-center justify-center w-full  ">
-      <Switch
+    <div className="flex items-center justify-center w-full flex-col gap-10 ">
+      {/* <Switch
         defaultSelected
         size="sm"
         color="default"
@@ -22,9 +22,14 @@ const AuthArea = () => {
         endContent={<Icon icon="tabler:moon-filled" />}
         className="mt-auto fixed right-3 top-4"
         onClick={() => toggleTheme()}
-      />
+      /> */}
+
       {page === "login" && <LoginComponent setPage={setPage} />}
       {page === "register" && <RegisterComponent setPage={setPage} />}
+      <h2 className="max-w-[50ch] text-center opacity-30">
+        The first time register or login might take time since the backend is
+        hosted in render.com (free teir) so its sleeping
+      </h2>
     </div>
   );
 };
