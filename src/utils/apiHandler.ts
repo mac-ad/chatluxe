@@ -33,18 +33,18 @@ async function post({
   requestHeaders = {},
   signal,
   payload,
+  stringify = true,
 }: {
   requestURL: string;
   requestHeaders?: Record<string, string>;
   signal?: AbortSignal;
   payload: any;
+  stringify?: boolean;
 }) {
   const requestOptions: any = {
     method: "POST",
     body: JSON.stringify(payload),
   };
-
-  console.log("inside post");
 
   const authHeaders: any = await authHeader();
   requestOptions.headers = {

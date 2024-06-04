@@ -10,10 +10,12 @@ import { SOCKET_EVENTS } from "@/constants/common";
 import { IconOnlyNavItems, NavEnum } from "@/constants/nav";
 import { useSocket } from "@/lib/context/socket-context";
 import conversationService from "@/services/conversation/conversation.service";
+import { ChatStoreState, useChatStore } from "@/store/chatStore";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
 import { IChatItem } from "@/types/conversations.types";
+import { IMessageItem } from "@/types/messages.types";
 import customToast from "@/utils/customToast";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const App = () => {
@@ -21,13 +23,20 @@ const App = () => {
     (state: GlobalStoreState) => state.currentNav
   );
   const store = useGlobalStore((state: GlobalStoreState) => state);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
+  const currentChatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
+  const chats = useChatStore((state: ChatStoreState) => state.chatLists);
+
+  console.log("in app chats = ", chatStore);
 
   const { socket } = useSocket();
 
   const [showCreateGroup, setShowCreateGroup] = useState<boolean>(false);
   const [showChatDetail, setShowChatDetail] = useState<boolean>(false);
 
-  const [chats, setChats] = useState<IChatItem[] | []>([]);
+  // const [chats, setChats] = useState<IChatItem[] | []>([]);
 
   const changeNav = (key: String) => {
     store.add("currentNav", key);
@@ -42,7 +51,9 @@ const App = () => {
       const flattenedResponse: IChatItem[] = Object.values(
         Object.values(res.data).flat()
       ) as IChatItem[];
-      setChats(flattenedResponse);
+      chatStore.add("chatLists", flattenedResponse);
+      // setChats(flattenedResponse);
+      // chatStore.save
     } catch (err) {
       console.log("err", err);
     }
@@ -53,20 +64,38 @@ const App = () => {
   };
 
   const onNewChat = (chat: IChatItem) => {
-    console.log("new chat is made with you ", chat);
-    setChats((prev: IChatItem[]) => [chat, ...prev]);
+    chatStore.addToChatLists(chat);
     customToast.success({
       content: `Someone created a chat with you`,
     });
   };
 
-  console.log("chats = ", chats);
+  // console.log("chats = ", chats);
 
   const onChatUpdate = (chat: IChatItem) => {
     console.log("chat updated", chat);
-    setChats((prev: IChatItem[]) => [
-      ...prev.map((item: IChatItem) => (item?._id === chat?._id ? chat : item)),
-    ]);
+    chatStore.replaceChatItem(chat);
+    // setChats((prev: IChatItem[]) => [
+    //   ...prev.map((item: IChatItem) => (item?._id === chat?._id ? chat : item)),
+    // ]);
+  };
+
+  const onMessageRecieved = (payload: IMessageItem) => {
+    console.log("message recieved", payload);
+    chatStore.onMessageRecieved(payload);
+
+    // if message is coming in currently selected chat then update message otherwise update the chat item
+    // console.log(
+    //   "message recieved",
+    //   chatDetail,
+    //   payload,
+    //   chatDetail?._id === payload?.conversation
+    // );
+    // console.log("message recieved", chatDetail);
+    // if (!chatDetail?._id) return;
+    // if (chatDetail?._id === payload?.conversation) {
+    //   setMessages((prev: IMessageItem[]) => [...prev, payload]);
+    // }
   };
 
   useEffect(() => {
@@ -76,11 +105,13 @@ const App = () => {
     socket.on(SOCKET_EVENTS.CONNECTED, onConnect);
     socket.on(SOCKET_EVENTS.NEW_CHAT, onNewChat);
     socket.on(SOCKET_EVENTS.CHAT_UPDATE, onChatUpdate);
+    socket.on(SOCKET_EVENTS.MESSAGE_RECIEVED, onMessageRecieved);
     // cleanups
     return () => {
       socket.off(SOCKET_EVENTS.CONNECTED);
       socket.off(SOCKET_EVENTS.CHAT_UPDATE);
       socket.off(SOCKET_EVENTS.NEW_CHAT);
+      socket.off(SOCKET_EVENTS.MESSAGE_RECIEVED);
     };
   }, [socket]);
 
@@ -99,13 +130,13 @@ const App = () => {
         {currentNav === NavEnum.CHATS && (
           <ChatLists
             chats={chats}
-            setChats={setChats}
+            // setChats={setChats}
             createGroupHandler={() => setShowCreateGroup((prev) => !prev)}
           />
         )}
         {currentNav === NavEnum.PEOPLE && (
           <PeopleLists
-            setChats={setChats}
+            // setChats={setChats}
             createGroupHandler={() => setShowCreateGroup((prev) => !prev)}
           />
         )}
@@ -118,7 +149,7 @@ const App = () => {
           >
             <CreateGroup
               crossHandler={() => setShowCreateGroup((prev) => !prev)}
-              setChats={setChats}
+              // setChats={setChats}
             />
           </div>
         )}

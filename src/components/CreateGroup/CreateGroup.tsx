@@ -27,7 +27,7 @@ const CreateGroup = ({
   setChats,
 }: {
   crossHandler: Function;
-  setChats: Dispatch<SetStateAction<IChatItem[] | []>>;
+  setChats?: Dispatch<SetStateAction<IChatItem[] | []>>;
 }) => {
   const [users, setUsers] = useState<UserShort[] | []>([]);
 
@@ -76,13 +76,14 @@ const CreateGroup = ({
 
       const res = await conversationService.createGroup({ payload });
       chatStore.saveChat(res.data);
+      chatStore.addToChatLists(res.data);
       globalStore.add("currentNav", IconOnlyNavItems[0]?.key);
 
       // send new chat event to all other participants
       socket?.emit(SOCKET_EVENTS.NEW_CHAT, res.data);
 
       // save new chat in chatlist
-      setChats((prev: IChatItem[]) => [res.data, ...prev]);
+      // setChats((prev: IChatItem[]) => [res.data, ...prev]);
       crossHandler();
     } catch (err) {}
   };

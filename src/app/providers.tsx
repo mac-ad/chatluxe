@@ -9,7 +9,7 @@ import { ThemeProvider, useTheme } from "next-themes";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // const theme = useGlobalStore((state: GlobalStoreState) => state.theme);
-  const { theme, setTheme } = useTheme();
+  // const { theme, setTheme } = useTheme();
   return (
     <NextUIProvider>
       {/* <ThemeProvider>{children}</ThemeProvider> */}

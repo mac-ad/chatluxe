@@ -4,9 +4,11 @@ import apiHandler from "@/utils/apiHandler";
 interface IMessageSend {
   signal?: AbortController;
   conversationId: string;
-  payload: {
-    text: string;
-  };
+  payload:
+    | {
+        text: string;
+      }
+    | FormData;
 }
 
 interface IGetMessages {
@@ -19,6 +21,7 @@ const sendMessage = ({ signal, conversationId, payload }: IMessageSend) => {
   return apiHandler.post({
     requestURL: `${url}/${conversationId}`,
     payload: payload,
+    stringify: payload instanceof FormData ? false : true,
   });
 };
 

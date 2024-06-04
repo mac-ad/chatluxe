@@ -26,7 +26,10 @@ const ChatItem = ({
   refreshChatList: Function;
   onClick: Function;
 }) => {
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
+  const chatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
   const self = useGlobalStore((state: GlobalStoreState) => state.user);
 
   // const recieverDetail: Participant = useMemo(
@@ -61,9 +64,13 @@ const ChatItem = ({
         content: res.message,
       });
       // if currentChat is the deleted chat then set the chat state to initial state
-      chatDetail.reset();
+      if (chatDetail?._id === data?._id) {
+        chatStore.resetChatDetail();
+      }
+      // remove item from chat List
+      chatStore.removeItemFromChatList(data);
       // refetch chat lists
-      refreshChatList(data);
+      // refreshChatList(data);
     } catch (err) {}
   };
 

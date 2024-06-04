@@ -12,7 +12,7 @@ import MessageType from "./MessageType";
 import Messages from "./Messages";
 import { ChatStoreState, useChatStore } from "@/store/chatStore";
 import { Conversation, Participant } from "@/types/conversations.types";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GlobalStoreState, useGlobalStore } from "@/store/store";
 import { IMessageItem } from "@/types/messages.types";
 import messageService from "@/services/message/message.service";
@@ -24,13 +24,15 @@ const ChatDetail = ({
 }: {
   showContactDetailHandler: Function;
 }) => {
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
   const self = useGlobalStore((state: GlobalStoreState) => state?.user);
+  const messages = useChatStore((state: ChatStoreState) => state.messages);
+  const messagesLoading = useChatStore(
+    (state: ChatStoreState) => state.loadingMessages
+  );
 
-  console.log("inside chat detail", chatDetail);
-
-  const [messages, setMessages] = useState<IMessageItem[] | []>([]);
-  const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
+  // const [messages, setMessages] = useState<IMessageItem[] | []>([]);
+  // const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
 
   const { socket } = useSocket();
 
@@ -45,6 +47,11 @@ const ChatDetail = ({
   //     </div>
   //   );
 
+  const chatDetail: null | Conversation = useMemo(
+    () => chatStore?.currentChatDetail,
+    [chatStore]
+  );
+
   const recieverDetail: Participant | null | undefined = useMemo(
     () =>
       chatDetail?.isGroupConversation
@@ -56,37 +63,20 @@ const ChatDetail = ({
   );
 
   const fetchAllMessages = async () => {
-    setMessagesLoading(true);
+    chatStore.add("loadingMessages", true);
     try {
       const res = await messageService.getAll({
         conversationId: chatDetail?._id!,
       });
-      setMessages(res.data);
-      setMessagesLoading(false);
+      chatStore.saveMessages(res.data);
+      chatStore.add("loadingMessages", false);
     } catch (err) {
-      setMessagesLoading(false);
-    }
-  };
-
-  const onMessageRecieved = (payload: IMessageItem) => {
-    // if message is coming in currently selected chat then update message otherwise update the chat item
-    // console.log(
-    //   "message recieved",
-    //   chatDetail,
-    //   payload,
-    //   chatDetail?._id === payload?.conversation
-    // );
-    console.log("message recieved", chatDetail);
-
-    if (!chatDetail?._id) return;
-
-    if (chatDetail?._id === payload?.conversation) {
-      setMessages((prev: IMessageItem[]) => [...prev, payload]);
+      chatStore.add("loadingMessages", false);
     }
   };
 
   useEffect(() => {
-    if (chatDetail?._id && !chatDetail?.loading) {
+    if (chatDetail?._id && !chatStore?.loadingChatDetail) {
       fetchAllMessages();
     }
   }, [chatDetail]);
@@ -94,12 +84,19 @@ const ChatDetail = ({
   useEffect(() => {
     if (!socket) return;
 
-    socket.on(SOCKET_EVENTS.MESSAGE_RECIEVED, onMessageRecieved);
-
-    return () => {
-      socket.off(SOCKET_EVENTS.MESSAGE_RECIEVED);
-    };
+    return () => {};
   }, [socket]);
+
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (messages) {
+      messageContainerRef?.current?.scrollTo({
+        top: messageContainerRef?.current?.scrollHeight,
+      });
+      console.log(messageContainerRef);
+    }
+  }, [messages]);
 
   if (!chatDetail?._id)
     return (
@@ -163,7 +160,8 @@ const ChatDetail = ({
       </div>
       {/* messages area */}
       <div
-        className="flex-1  overflow-y-auto px-4 relative bg-transparent  overflow-y-auto"
+        className="flex-1  overflow-y-auto px-4 relative bg-transparent  overflow-y-auto "
+        ref={messageContainerRef}
         // onContextMenu={contextMenuHandler}
       >
         {menuVisible && (
@@ -202,7 +200,7 @@ const ChatDetail = ({
       </div>
       {/* message type area */}
       <div className="mt-auto border-t dark:border-t-[rgba(255,255,255,.1)] dark:bg-[#212C32] p-3">
-        <MessageType setMessages={setMessages} />
+        <MessageType />
       </div>
     </div>
   );
