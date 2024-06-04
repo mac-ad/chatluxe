@@ -13,7 +13,7 @@ const AuthArea = () => {
   );
 
   return (
-    <div className="flex items-center justify-center w-full bg-white dark:bg-red-500 ">
+    <div className="flex items-center justify-center w-full  ">
       <Switch
         defaultSelected
         size="sm"
