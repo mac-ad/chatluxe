@@ -45,6 +45,8 @@ export default function Home() {
 
   useEffect(() => {
     // add("loading", false);
+    console.log = () => {};
+    console.warn = () => {};
   }, []);
 
   if (loading) {

@@ -8,39 +8,83 @@ interface FileChange {
   };
 }
 
-const FileUploadComponent = ({ htmlFor }: { htmlFor?: string }) => {
-  const [selectedFiles, setSelectedFiles] = useState<any>([]);
-
+const FileUploadComponent = ({
+  onSubmit,
+  register,
+  handleSubmit,
+  defaultValues,
+}: {
+  onSubmit: Function;
+  register: any;
+  handleSubmit: any;
+  defaultValues: any;
+}) => {
   const previewItem = useMemo(
-    () => selectedFiles[selectedFiles?.length - 1],
-    [selectedFiles]
+    () =>
+      defaultValues?.images && defaultValues?.images?.length > 0
+        ? defaultValues?.images?.[defaultValues?.images?.length - 1]
+        : null,
+    [defaultValues?.images]
   );
 
-  const changeHandler = (e: any) => {
-    setSelectedFiles((prev: any) => [...prev, ...e.target.files]);
-  };
+  console.log("previreItems = ", defaultValues);
+
+  // const changeHandler = (e: any) => {
+  //   setValue((prev: any) => [...prev, ...e.target.files]);
+  // };
 
   return (
     <div className="flex flex-col gap-10 h-[80vh]">
       <h1 className="font-bold text-lg">Upload your files</h1>
-      <div className=" flex-1">
+      <div className="flex-1 flex items-center justify-center ">
         {/* selected item preview */}
-        {previewItem && <div></div>}
+        {previewItem && (
+          <div className="w-full  h-[300px] ">
+            <img
+              src={URL.createObjectURL(previewItem)}
+              className="h-full w-full object-contain"
+              alt=""
+            />
+          </div>
+        )}
+        <h2 className="text-2xl max-w-[30ch] text-center opacity-50">
+          This is to be built, and is under construction
+        </h2>
       </div>
       <div className="flex flex-col gap-4">
         <Input placeholder="Add a caption" radius="sm" size="lg" />
         <div>
           {/* items selected and add item button */}
           <div className="flex justify-center gap-2 mt-7">
-            <form className="flex items-center  gap-2 w-full">
-              <div className="ml-auto flex items-center gap-2 w-ful">
-                <input
+            <form
+              enc-type="multipart/form-data"
+              className="flex items-center  gap-2 w-full"
+              onSubmit={(e: any) => {
+                e.preventDefault();
+              }}
+            >
+              {/* {defaultValues?.images &&
+                defaultValues?.images?.length > 0 &&*/}
+              {/* {defaultValues?.images?.map((item: File) => (
+                <div className="w-[60px] aspect-square ml-auto">
+                  <img
+                    src={URL.createObjectURL(item)}
+                    className="h-full w-full object-contain"
+                    alt=""
+                  />
+                </div>
+              ))} */}
+              <div className="flex items-center gap-2 w-ful">
+                {/* <input
                   type="file"
                   id="file"
                   className="hidden"
-                  onChange={changeHandler}
-                />
+                  multiple
+                  // onChange={changeHandler}
+                  {...register("images")}
+                /> */}
                 {/* add button */}
+
                 <label
                   htmlFor="file"
                   className="aspect-square border w-[60px] rounded-md flex items-center justify-center cursor-pointer opacity-60 hover:opacity-100 transition-all"

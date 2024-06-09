@@ -68,13 +68,17 @@ const attachmentItems = [
 const MessageType = ({
   setMessages,
 }: {
-  setMessages: Dispatch<SetStateAction<IMessageItem[] | []>>;
+  setMessages?: Dispatch<SetStateAction<IMessageItem[] | []>>;
 }) => {
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
+  const chatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
+
   const [showFileUpload, setShowFileUpload] = useState<boolean>(false);
   const { socket } = useSocket();
 
-  const { handleSubmit, setValue, watch } = useForm({
+  const { handleSubmit, setValue, watch, register } = useForm({
     defaultValues: {
       text: "",
     },
@@ -85,6 +89,16 @@ const MessageType = ({
   const onSubmit = async (data: any) => {
     setValue("text", "");
     const payload = { ...data };
+    console.log("data = ", data);
+    if (data?.text === "") return;
+
+    // const formdata = new FormData();
+    // formdata.append("file", data?.images?.[0]);
+
+    // console.log(data?.images?.[0]);
+
+    // console.log("formdata = ", formdata);
+
     try {
       const res = await messageService.sendMessage({
         conversationId: chatDetail?._id!,
@@ -92,15 +106,9 @@ const MessageType = ({
       });
 
       // add new message to the message list
-      setMessages((prev: IMessageItem[]) => [...prev, res.data]);
+      chatStore.addMessageToMessages(res.data);
 
       // emit recieved message socket
-      if (socket) {
-        // socket.emit(SOCKET_EVENTS.MESSAGE_RECIEVED, res.data);
-        // emit chat update
-        // with last message
-      }
-
       // for this current logged in user update chat
     } catch (err) {}
   };
@@ -178,13 +186,19 @@ const MessageType = ({
       > */}
       <Modal
         isOpen={showFileUpload}
+        // isOpen={true}
         size="4xl"
         onClose={() => setShowFileUpload(false)}
         className="p-8"
         backdrop="opaque"
       >
         <ModalContent>
-          <FileUploadComponent />
+          <FileUploadComponent
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            register={register}
+            defaultValues={defaultValues}
+          />
         </ModalContent>
       </Modal>
 

@@ -17,6 +17,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import React, { useEffect, useMemo } from "react";
+import { twMerge } from "tailwind-merge";
 
 const UserItem = ({
   data,
@@ -25,7 +26,7 @@ const UserItem = ({
   type,
 }: {
   data: UserShort;
-  onClick: Function;
+  onClick?: Function;
   placeholder?: String;
   type?: UserItemType;
 }) => {
@@ -53,8 +54,10 @@ const UserItem = ({
 
   return (
     <div
-      className="group transition-all flex hover:bg-[#ddd]  items-center p-4 gap-3 border-b dark:border-b-[rgba(255,255,255,.1)] dark:hover:bg-[#212C32]   cursor-pointer"
-      onClick={() => onClick(data)}
+      className={twMerge(
+        "group transition-all flex hover:bg-[#ddd]  items-center p-4 gap-3 border-b dark:border-b-[rgba(255,255,255,.1)] dark:hover:bg-[#212C32] cursor-pointer"
+      )}
+      onClick={() => (onClick ? onClick(data) : {})}
     >
       <Avatar src={data?.avatar?.url} />
       <div className="flex flex-col gap-1">

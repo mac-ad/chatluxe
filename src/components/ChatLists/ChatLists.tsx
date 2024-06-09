@@ -35,13 +35,15 @@ const ChatLists = ({
 }: {
   createGroupHandler: Function;
   chats: IChatItem[];
-  setChats: Dispatch<SetStateAction<IChatItem[]>>;
+  setChats?: Dispatch<SetStateAction<IChatItem[]>>;
 }) => {
   const logout = useGlobalStore((state: GlobalStoreState) => state.logOutUser);
   const currentConv = useChatStore((state: ChatStoreState) => state);
 
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
-  console.log("chatDetai; = ", chatDetail);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
+  const currentChatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
 
   const getChatDetail = async (data: IChatItem) => {
     try {
@@ -50,22 +52,28 @@ const ChatLists = ({
       });
       // add chat detail to store local
       console.log("got detail = ", res.data);
-      chatDetail.saveChat(res.data);
+      chatStore.saveChat(res.data);
     } catch (err) {
       console.log("err", err);
     }
   };
 
   const chatItemClickHandler = (data: IChatItem) => {
+    if (data?._id === currentChatDetail?._id) return;
     // get chat detail and save in store
-    chatDetail.add("loading", true);
+    chatStore.add("loading", true);
     getChatDetail(data);
   };
 
   const removeChatItem = (item: IChatItem) => {
-    setChats((prev: IChatItem[]) =>
-      prev.filter((it: IChatItem) => it?._id !== item?._id)
-    );
+    // setChats((prev: IChatItem[]) =>
+    //   prev.filter((it: IChatItem) => it?._id !== item?._id)
+    // );
+  };
+
+  const logoutHandler = () => {
+    logout();
+    chatStore.reset();
   };
 
   return (
@@ -81,11 +89,7 @@ const ChatLists = ({
           </DropdownTrigger>
           <DropdownMenu>
             <DropdownSection>
-              <DropdownItem
-                key="new"
-                shortcut="⌘N"
-                onClick={() => createGroupHandler()}
-              >
+              <DropdownItem shortcut="⌘N" onClick={() => createGroupHandler()}>
                 New Group
               </DropdownItem>
               <DropdownItem
@@ -93,7 +97,7 @@ const ChatLists = ({
                 endContent={
                   <Icon icon="material-symbols:logout" fontSize={20} />
                 }
-                onClick={() => logout()}
+                onClick={() => logoutHandler()}
               >
                 Logout
               </DropdownItem>
@@ -111,6 +115,11 @@ const ChatLists = ({
       </div>
       <div className="flex-1  overflow-y-auto overflow-x-hidden">
         <div>
+          {chats?.length === 0 && (
+            <div className="flex justify-center mt-5 opacity-50">
+              No Chats found
+            </div>
+          )}
           {chats?.map((chat: IChatItem, idx: number) => (
             <ChatItem
               data={chat}

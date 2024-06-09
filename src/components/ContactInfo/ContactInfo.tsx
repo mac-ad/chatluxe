@@ -4,13 +4,16 @@ import { Participant } from "@/types/conversations.types";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Avatar } from "@nextui-org/react";
 import { useMemo } from "react";
+import UserItem from "../PeopleLists/UserItem";
 
 const ContactInfo = ({
   showContactDetailHandler,
 }: {
   showContactDetailHandler: Function;
 }) => {
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const chatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
   const self = useGlobalStore((state: GlobalStoreState) => state.user);
 
   const recieverDetail: Participant | undefined | null = useMemo(
@@ -56,7 +59,26 @@ const ContactInfo = ({
           </h3>
         </div>
       </div>
-      <div></div>
+      <div className="mt-20 flex flex-col gap-4">
+        {chatDetail?.isGroupConversation && (
+          <div>
+            <h3 className="text-lg font-semibold opacity-80 mb-1">Admin</h3>
+            <div>
+              <UserItem data={chatDetail?.admin as Participant} />
+            </div>
+          </div>
+        )}
+        <div>
+          <h2 className="text-lg font-semibold opacity-80 mb-3">
+            {chatDetail?.participants?.length! - 1} Members
+          </h2>
+          {chatDetail?.participants?.map((item: Participant) =>
+            item?._id !== chatDetail?.admin?._id ? (
+              <UserItem data={item} key={item?.username} />
+            ) : null
+          )}
+        </div>
+      </div>
     </div>
   );
 };

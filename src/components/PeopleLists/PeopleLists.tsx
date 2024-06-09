@@ -24,7 +24,7 @@ const PeopleLists = ({
   setChats,
 }: {
   createGroupHandler: Function;
-  setChats: any;
+  setChats?: any;
 }) => {
   const [users, setUsers] = useState<UserShort[] | []>([]);
   const store = useGlobalStore((state: GlobalStoreState) => state);
@@ -49,18 +49,20 @@ const PeopleLists = ({
         param: user?._id,
       });
       //   navigate to chat tab
-      store.add("currentNav", NavEnum.CHATS);
       // save chat detail
       chatStore.saveChat(res.data);
       // add recently created chat item to the chatlist
 
       // if conversation is fetched then just set it as current chat
       // if conversation is created then append to the top of chat lists
+      store.add("currentNav", NavEnum.CHATS);
+
       if (res?.statusCode === 201) {
         // created
-        setChats((prev: any) => [res.data, ...prev]);
+        // setChats((prev: any) => [res.data, ...prev]);
         // emit to participants
         // socket?.emit(SOCKET_EVENTS.NEW_CHAT, res.data);
+        chatStore.addToChatLists(res.data);
       }
     } catch (err) {
       console.log(err);

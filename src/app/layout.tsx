@@ -46,7 +46,15 @@ export default function RootLayout({
           </div>
 
           {/* toastify */}
-          <Toaster position="bottom-left" richColors duration={5000} />
+          <Toaster
+            position="top-left"
+            richColors
+            duration={2000}
+            closeButton
+            expand
+            invert
+            theme="system"
+          />
 
           {/* <footer>footer</footer> */}
         </Providers>

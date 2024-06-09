@@ -9,6 +9,5 @@ export const authHeader = async (jsonType = true) => {
       "Content-Type": "application/json",
     };
   }
-
   return header;
 };

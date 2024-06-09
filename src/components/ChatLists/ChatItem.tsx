@@ -26,7 +26,10 @@ const ChatItem = ({
   refreshChatList: Function;
   onClick: Function;
 }) => {
-  const chatDetail = useChatStore((state: ChatStoreState) => state);
+  const chatStore = useChatStore((state: ChatStoreState) => state);
+  const chatDetail = useChatStore(
+    (state: ChatStoreState) => state.currentChatDetail
+  );
   const self = useGlobalStore((state: GlobalStoreState) => state.user);
 
   // const recieverDetail: Participant = useMemo(
@@ -61,9 +64,13 @@ const ChatItem = ({
         content: res.message,
       });
       // if currentChat is the deleted chat then set the chat state to initial state
-      chatDetail.reset();
+      if (chatDetail?._id === data?._id) {
+        chatStore.resetChatDetail();
+      }
+      // remove item from chat List
+      chatStore.removeItemFromChatList(data);
       // refetch chat lists
-      refreshChatList(data);
+      // refreshChatList(data);
     } catch (err) {}
   };
 
@@ -108,12 +115,11 @@ const ChatItem = ({
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownSection>
-                <DropdownItem key="new">Archive Chat</DropdownItem>
-                <DropdownItem key="new">Mute Notifications</DropdownItem>
-                <DropdownItem key="new">Mark as unread</DropdownItem>
-                <DropdownItem key="new">Block</DropdownItem>
+                <DropdownItem>Archive Chat</DropdownItem>
+                <DropdownItem>Mute Notifications</DropdownItem>
+                <DropdownItem>Mark as unread</DropdownItem>
+                <DropdownItem>Block</DropdownItem>
                 <DropdownItem
-                  key="new"
                   className="text-danger"
                   color="danger"
                   onClick={chatDeleteHandler}

@@ -16,6 +16,7 @@ const RegisterComponent = ({ setPage }: { setPage: Dispatch<string> }) => {
 
   const onSubmit = async () => {
     const data = watch();
+    setLoading(true);
 
     try {
       const res = await userService.register({
@@ -25,11 +26,13 @@ const RegisterComponent = ({ setPage }: { setPage: Dispatch<string> }) => {
       customToast.success({
         content: res.message,
       });
-    } catch (err) {
+      setLoading(false);
+    } catch (err: any) {
       console.log(err);
       customToast.error({
-        content: "asd",
+        content: err.message,
       });
+      setLoading(false);
     }
   };
 
