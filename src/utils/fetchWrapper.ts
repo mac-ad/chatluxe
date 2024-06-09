@@ -1,4 +1,6 @@
+import { GlobalStoreState, useGlobalStore } from "@/store/store";
 import { checkIfTokenExpired } from "./common";
+import customToast from "./customToast";
 
 // let isRefreshing: boolean = false;
 // let tokenQueue: any[] = [];
@@ -9,6 +11,17 @@ export const fetchWrapper = async (url: string, options: any = {}) => {
 
   if (accessToken === "undefined") {
     accessToken = null;
+  }
+
+  if (accessToken && (await checkIfTokenExpired(accessToken))) {
+    // remove accessToken from local storage
+    localStorage.removeItem("accessToken");
+    customToast.success({
+      content: "You are logged out of your session",
+    });
+    window.location.href = window.location.origin + "/";
+    //
+    // remove user from local state zustand
   }
 
   // if (!accessToken || (await checkIfTokenExpired(accessToken))) {
